@@ -1,4 +1,4 @@
-import { env } from "../config";
+import { env } from "../Config/config";
 import jwt from "jsonwebtoken";
 
 export const generatetoken = (newUser: any, username: String) => {

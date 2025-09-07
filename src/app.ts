@@ -1,6 +1,6 @@
 import express from "express";
-import { env } from "./config";
-import connectDB from "./database";
+import { env } from "./Config/config";
+import connectDB from "./Database/database";
 import cors from "cors";
 import morgan from "morgan";
 import { errorHandler } from "./Middleware/errorHandler";
