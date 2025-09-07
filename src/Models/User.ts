@@ -1,8 +1,8 @@
 import { model, Schema } from "mongoose";
 
 const userSchema = new Schema({
-  email: { type: String, require: true },
-  password: { type: String, require: true },
+  email: { type: String },
+  password: { type: String },
   todos: [{ type: Schema.ObjectId, ref: "Todo", default: [] }],
 });
 
