@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../Config/config";
+import User from "../Models/User";
 import { serverError } from "../Middleware/serverError";
 
-export const authorization = (
+export const authorization = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -11,19 +12,24 @@ export const authorization = (
   try {
     const header = req.headers.authorization;
     if (!header) {
-      return next({ message: "No token provided", status: 401 });
+      return res.status(401).json({ message: "No token provided" });
     }
 
     const [scheme, token] = header?.split(" ") || [];
     if (scheme !== "Bearer" || !token) {
-      return next({ message: "Invalid auth format", status: 401 });
+      return res.status(401).json({ message: "Invalid auth format" });
     }
     try {
-      const payload = jwt.verify(token, env.JWT_Secret!);
-      (req as any).user = payload;
+      const decodeToken: any = jwt.verify(token, env.JWT_Secret!);
+      const { _id } = decodeToken;
+      const user = await User.findById(_id);
+      if (!user) {
+        return next({ status: 401, message: "not authorized" });
+      }
+      req.user = user;
       next();
     } catch (err) {
-      return next({ message: "Invalid or expired token", status: 401 });
+      res.status(401).json({ message: "Invalid or expired token" });
     }
   } catch (error) {
     console.log(error);
